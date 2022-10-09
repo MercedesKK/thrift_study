@@ -37,7 +37,7 @@ struct MessageQueue
 class Pool
 {
     public:
-        void save_result(int a,int b)
+        void save_result(int a, int b)
         {
             printf("Match Result: %d %d\n", a, b);
         }
@@ -49,7 +49,8 @@ class Pool
                 auto a = users[0], b = users[1];
                 users.erase(users.begin());
                 users.erase(users.begin());
-
+                
+                save_result(a.id, b.id);
             }
         }
 
@@ -71,7 +72,7 @@ class Pool
         }
     private:
         vector<User> users;
-}
+}pool;
 
 class MatchHandler : virtual public MatchIf {
     public:
@@ -118,6 +119,11 @@ void consume_task()
             auto task = message_queue.q.front();
             message_queue.q.pop();
             lck.unlock();
+
+            if (task.type == "add") pool.add(task.user);
+            else if (task.type == "remove") pool.remove(task.user);
+
+            pool.match();
         }
     }
 }
